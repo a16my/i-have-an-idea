@@ -1,0 +1,43 @@
+@model BirFikrimVar.Models.Post
+@{
+    ViewData["Title"] = "Idea Details";
+}
+
+<a asp-action="Index" class="btn btn-link">&larr; Back to Ideas</a>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <h3 class="mb-1">@Model.Title</h3>
+            <small class="text-muted">@Model.CreatedAt.ToLocalTime().ToString("f")</small>
+        </div>
+        <p class="mt-2">@Model.Content</p>
+
+        <div class="text-muted small mb-3">
+            By: @(Model.User?.FullName ?? "Unknown")
+        </div>
+
+        <hr />
+        <h5 class="mb-3">Comments (@(Model.Comments?.Count() ?? 0))</h5>
+        @if (Model.Comments == null || !Model.Comments.Any())
+        {
+            <div class="text-muted">No comments yet.</div>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var c in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                {
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>@c.Content</div>
+                            <small class="text-muted">
+                                @(c.User?.FullName ?? "Unknown") • @c.CreatedAt.ToLocalTime().ToString("g")
+                            </small>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

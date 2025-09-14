@@ -1,0 +1,74 @@
+@model IEnumerable<BirFikrimVar.Models.Post>
+@{
+    ViewData["Title"] = "Feed";
+}
+
+<h2>Feed</h2>
+
+<!-- New Post Form -->
+<form asp-action="Create" method="post" class="mb-4">
+    <input type="text" name="title" class="form-control" placeholder="Your idea title" required />
+    <textarea name="content" class="form-control mt-2" rows="3" placeholder="Share your idea..." required></textarea>
+    <button type="submit" class="btn btn-primary mt-2">Post</button>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<!-- Posts List -->
+@foreach (var post in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>@post.Title</h5>
+            <p>@post.Content</p>
+
+            <small>
+                By <b>@post.User?.FullName</b>
+                on @post.CreatedAt.ToLocalTime()
+            </small>
+
+            <!-- Share info -->
+            @if (post.OriginalPost != null)
+            {
+                <p class="text-muted">
+                    🔁 Shared from: <b>@post.OriginalPost.User?.FullName</b>
+                </p>
+            }
+
+            <!-- Like button -->
+            <form asp-action="Like" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@post.Id" />
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    ❤️ @post.Likes?.Count
+                </button>
+            </form>
+
+            <!-- Share button -->
+            <form asp-action="Share" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@post.Id" />
+                <button type="submit" class="btn btn-sm btn-info">🔁 Share</button>
+            </form>
+
+            <!-- Comments -->
+            <div class="mt-2">
+                <strong>Comments (@post.Comments?.Count):</strong>
+                <ul>
+                    @foreach (var c in post.Comments)
+                    {
+                        <li><b>@c.User?.FullName</b>: @c.Content</li>
+                    }
+                </ul>
+            </div>
+
+            <!-- Add comment -->
+            <form asp-action="Comment" method="post" class="mt-2">
+                <input type="hidden" name="postId" value="@post.Id" />
+                <input type="text" name="content" class="form-control" placeholder="Write a comment..." required />
+                <button type="submit" class="btn btn-sm btn-secondary mt-1">Comment</button>
+            </form>
+        </div>
+    </div>
+}

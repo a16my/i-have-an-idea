@@ -1,0 +1,44 @@
+@model IEnumerable<BirFikrimVar.Models.Post>
+
+@{
+    ViewData["Title"] = "Ideas";
+}
+<h2>All Ideas</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Create New Idea</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Author</th>
+            <th>Created At</th>
+            <th>Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@post.Id">@post.Title</a>
+                </td>
+                <td>@post.Content</td>
+                <td>@post.User?.FullName</td>
+                <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@(post.Comments?.Count() ?? 0)</td>
+            </tr>
+        }
+    </tbody>
+</table>
